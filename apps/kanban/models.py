@@ -1,5 +1,5 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
 
 # constants
 IMAGE = 0
@@ -9,16 +9,25 @@ FILE_EXTENSION_CHOICES = (
     (TEXT_FILE, '.txt,.rst,.md,.c,.cpp,.h,.cs.,.py')
 )
 
+
+class KanBanUser(AbstractUser):
+    pass
+    # add additional fields in here
+
+    def __str__(self):
+        return self.username
+
+
 # related names: https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.ForeignKey.related_name
 # abstract base classes: https://docs.djangoproject.com/en/3.1/topics/db/models/#abstract-base-classes
 class Auditable(models.Model):
     """A base class to define common auditable fields"""
-    created_by = models.ForeignKey(User, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
+    created_by = models.ForeignKey(KanBanUser, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=True)
-    changed_by = models.ForeignKey(User, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
+    changed_by = models.ForeignKey(KanBanUser, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
     changed_time = models.DateTimeField(auto_now=True)
     archived = models.BooleanField()
-    archived_by = models.ForeignKey(User, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
+    archived_by = models.ForeignKey(KanBanUser, related_name='+', on_delete=models.SET_NULL, blank=True, null=True)
     archived_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -30,13 +39,13 @@ class Board(Auditable):
     name = models.CharField(max_length=50, unique=True, blank=False, null=False)
     slug = models.SlugField(max_length=50, unique=True, blank=True, null=False)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
-    members = models.ManyToManyField(User, through='Member')
+    members = models.ManyToManyField(KanBanUser, through='Member')
 
 
 class Member(models.Model):
-    """A Member maps a User to a Board, it is the explicit through table for that many-to-many"""
+    """A Member maps a KanBanUser to a Board, it is the explicit through table for that many-to-many"""
     board = models.ForeignKey(Board, on_delete=models.CASCADE, null=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(KanBanUser, on_delete=models.CASCADE, null=False)
     starred = models.BooleanField(default=False, blank=True, null=False)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
 
@@ -47,8 +56,8 @@ class Member(models.Model):
 
 
 class Tag(models.Model):
-    """A Tag is only visible to the User that created it"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    """A Tag is only visible to the KanBanUser that created it"""
+    user = models.ForeignKey(KanBanUser, on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(max_length=50, unique=True, blank=False, null=False)
     color = models.CharField(max_length=32, default="#aaaaaa", blank=True, null=False)
 
@@ -69,9 +78,9 @@ class Attachment(models.Model):
     """An Attachment is a file uploaded by a Member of a Board"""
     board = models.ForeignKey(Board, on_delete=models.CASCADE, blank=False, null=False)
     name = models.CharField(max_length=50, unique=True, blank=False, null=False)
-    url = models.URLField(blank=False, null=False)
+    file_path = models.URLField(blank=False, null=False)
     attachment_type = models.ForeignKey(AttachmentType, on_delete=models.CASCADE, blank=False, null=False)
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
+    uploaded_by = models.ForeignKey(KanBanUser, on_delete=models.CASCADE, blank=False, null=False)
     uploaded_time = models.DateTimeField(auto_now=True)
 
 
@@ -97,7 +106,7 @@ class Card(Auditable):
     complexity = models.DecimalField(max_digits=12, decimal_places=4, blank=True, null=True)
     hours = models.DecimalField(max_digits=12, decimal_places=4, blank=True, null=True)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
-    assigned_users = models.ManyToManyField(User)
+    assigned_users = models.ManyToManyField(KanBanUser)
     labels = models.ManyToManyField(Label)
     tags = models.ManyToManyField(Tag)
     attachments = models.ManyToManyField(Attachment)

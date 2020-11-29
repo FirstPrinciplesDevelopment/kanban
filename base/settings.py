@@ -153,3 +153,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+
+# auth Customization
+
+AUTH_USER_MODEL = 'kanban.KanBanUser'
