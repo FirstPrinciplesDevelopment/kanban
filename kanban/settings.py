@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+10+hxb@1wc!3(*9=xok843tvnpljj7kzmti7^brthky=z0$z='
+try:
+    SECRET_KEY = os.environ['SECRET_KEY']
+except KeyError:
+    SECRET_KEY = 'e&qgelnnzz309jh232F&*(68772y34879r2398876*&%^%*^&_l9f5gasfds1z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    DEBUG = os.environ['DEBUG'] == 'True'
+except KeyError:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+# Configure allowed hosts and https in development and production
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = ['domain.com', '.domain.com', 'ffff:ffff::ffff:ffff:ffff:ffff', '0.0.0.0', 'localhost']
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
 
 
 # Application definition
@@ -118,3 +132,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+# User uploaded media directory while in development (Images, Documents)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = "/media/"
