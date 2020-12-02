@@ -1,70 +1,83 @@
-from django.db import models
-from django.db.models import fields
 from rest_framework import serializers
 
-from .models import (Attachment, AttachmentType, Auditable, Board, Card,
-                     Container, KanBanUser, Label, Member, Tag)
+from .models import (
+    Attachment, AttachmentType, Board, Card,
+    Container, KanBanUser, Label, Member, Tag
+    )
+
+# app_name = 'kanban'
 
 # constants
-AUDITABLE_FIELDS = ['created_by', 'created_time', 'changed_by', 'changed_time',
-                    'archived', 'archived_by', 'archived_time']
+AUDITABLE_FIELDS = [
+    'created_by', 'created_time', 'changed_by', 'changed_time',
+    'archived', 'archived_by', 'archived_time'
+    ]
 
 
-class KanBanUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = KanBanUser
-        fields = '__all__'
-
-
-class BoardSerializer(serializers.ModelSerializer):
+class BoardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Board
-        fields = ['id', 'name', 'slug', 'position', 'members'] + AUDITABLE_FIELDS
+        fields = [
+            'url', 'id', 'name', 'slug', 'position', 'containers', 'members'
+            ] + AUDITABLE_FIELDS
 
 
-class MemberSerializer(serializers.ModelSerializer):
+class MemberSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Member
-        fields = ['id', 'board', 'user', 'starred', 'position']
+        fields = ['url', 'id', 'board', 'user', 'starred', 'position']
 
 
-class TagSerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ['id', 'user', 'name', 'color']
+        fields = ['url', 'id', 'user', 'name', 'color']
 
 
-class LabelSerializer(serializers.ModelSerializer):
+class LabelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Label
-        fields = ['id', 'board', 'name', 'color']
+        fields = ['url', 'id', 'board', 'name', 'color']
 
 
-class AttachmentTypeSerializer(serializers.ModelSerializer):
+class AttachmentTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = AttachmentType
-        fields = ['id', 'name', 'file_extension']
+        fields = ['url', 'id', 'name', 'file_extension']
 
 
-class AttachmentSerializer(serializers.ModelSerializer):
+class AttachmentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Attachment
         fields = [
-            'id', 'board', 'name', 'file_path', 'attachment_type', 'uploaded_by', 'uploaded_time'
+             'url', 'id', 'board', 'name', 'file_path', 'attachment_type',
+             'uploaded_by', 'uploaded_time'
             ]
 
 
-class ContainerSerializer(serializers.ModelSerializer):
+class ContainerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Container
         fields = [
-            'id', 'board', 'name', 'slug', 'position', 'labels', 'tags'
+             'url', 'id', 'board', 'name', 'slug', 'position', 'labels', 'tags'
             ] + AUDITABLE_FIELDS
 
-class CardSerializer(serializers.ModelSerializer):
+
+class CardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Card
         fields = [
-            'id', 'board', 'container', 'name', 'slug', 'content', 'start_time', 'end_time',
-            'complexity', 'hours', 'position', 'assigned_users', 'labels', 'tags', 'attachments'
+             'url', 'id', 'board', 'container', 'name', 'slug', 'content',
+             'start_time', 'end_time', 'complexity', 'hours', 'position',
+             'assigned_users', 'labels', 'tags', 'attachments'
             ] + AUDITABLE_FIELDS
+
+
+class KanBanUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = KanBanUser
+        fields = [
+            'url', 'id', 'username', 'first_name', 'last_name', 'email',
+            'is_staff', 'is_active', 'boards_created', 'containers_created',
+            'cards_created'
+            ]

@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Board, Member, Container, Card, AttachmentType, Attachment, Tag, Label
+
+from .models import (
+    Attachment, AttachmentType, Board, Card, Container,
+    KanBanUser, Label, Member, Tag
+    )
 
 # register your models here.
 admin.site.register(Board)
@@ -10,3 +14,4 @@ admin.site.register(AttachmentType)
 admin.site.register(Attachment)
 admin.site.register(Tag)
 admin.site.register(Label)
+admin.site.register(KanBanUser)

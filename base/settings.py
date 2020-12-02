@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 try:
     SECRET_KEY = os.environ['SECRET_KEY']
 except KeyError:
-    SECRET_KEY = 'e&qgelnnzz309jh232F&*(68772y34879r2398876*&%^%*^&_l9f5gasfds1z'
+    SECRET_KEY = 'e&qgelnnzz309jh232F&*(68772y34879r2398876*&%^%*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 try:
@@ -36,7 +36,10 @@ except KeyError:
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['domain.com', '.domain.com', 'ffff:ffff::ffff:ffff:ffff:ffff', '0.0.0.0', 'localhost']
+    ALLOWED_HOSTS = [
+        'domain.com', '.domain.com', 'ffff:ffff::ffff:ffff:ffff:ffff',
+        '0.0.0.0', 'localhost'
+        ]
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True

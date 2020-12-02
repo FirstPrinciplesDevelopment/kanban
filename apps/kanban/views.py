@@ -1,17 +1,25 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 
-from .models import (Attachment, AttachmentType, Board, Card, Container,
-                     KanBanUser, Label, Member, Tag)
-from .serializers import (AttachmentSerializer, AttachmentTypeSerializer,
-                          BoardSerializer, CardSerializer, ContainerSerializer,
-                          LabelSerializer, TagSerializer)
+from .models import (
+    Attachment, AttachmentType, Board, Card, Container,
+    KanBanUser, Label, Member, Tag
+    )
 
-# Create your views here.
+from .serializers import (
+    AttachmentSerializer, AttachmentTypeSerializer, BoardSerializer,
+    CardSerializer, ContainerSerializer, KanBanUserSerializer,
+    LabelSerializer, MemberSerializer, TagSerializer
+    )
+
 
 class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
+
+
+class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
+    serializer_class = MemberSerializer
 
 
 class ContainerViewSet(viewsets.ModelViewSet):
@@ -42,3 +50,8 @@ class TagViewSet(viewsets.ModelViewSet):
 class LabelViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
+
+
+class KanBanUserViewSet(viewsets.ModelViewSet):
+    queryset = KanBanUser.objects.all()
+    serializer_class = KanBanUserSerializer
