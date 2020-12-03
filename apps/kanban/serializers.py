@@ -59,7 +59,7 @@ class ContainerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Container
         fields = [
-             'url', 'id', 'board', 'name', 'slug', 'position', 'labels', 'tags'
+             'url', 'id', 'board', 'cards', 'name', 'slug', 'position', 'labels', 'tags'
             ] + AUDITABLE_FIELDS
 
 

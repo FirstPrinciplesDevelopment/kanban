@@ -169,7 +169,7 @@ class Card(Auditable):
         Board, on_delete=models.CASCADE, blank=False, null=False
         )
     container = models.ForeignKey(
-        Container, on_delete=models.CASCADE, blank=False, null=False
+        Container, related_name='cards', on_delete=models.CASCADE, blank=False, null=False
         )
     name = models.CharField(
         max_length=100, unique=True, blank=False, null=False
