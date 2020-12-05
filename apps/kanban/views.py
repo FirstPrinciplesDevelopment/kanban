@@ -11,6 +11,39 @@ from .serializers import (
     LabelSerializer, MemberSerializer, TagSerializer
     )
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
+
+
+# class UserViewSet(viewsets.ViewSet):
+#     """
+#     Example empty viewset demonstrating the standard
+#     actions that will be handled by a router class.
+
+#     If you're using format suffixes, make sure to also include
+#     the `format=None` keyword argument for each action.
+#     """
+
+#     def list(self, request):
+#         pass
+
+#     def create(self, request):
+#         pass
+
+#     def retrieve(self, request, pk=None):
+#         pass
+
+#     def update(self, request, pk=None):
+#         pass
+
+#     def partial_update(self, request, pk=None):
+#         pass
+
+#     def destroy(self, request, pk=None):
+#         pass
+
 
 class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
@@ -25,6 +58,15 @@ class MemberViewSet(viewsets.ModelViewSet):
 class ContainerViewSet(viewsets.ModelViewSet):
     queryset = Container.objects.all()
     serializer_class = ContainerSerializer
+
+    def list(self, request, board_id=None):
+        # get all containers belonging to a board
+        containers = Container.objects.all().filter(board_id=board_id)
+        serializer = ContainerSerializer(data=containers)
+        if serializer.is_valid():
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
 
 
 class CardViewSet(viewsets.ModelViewSet):
