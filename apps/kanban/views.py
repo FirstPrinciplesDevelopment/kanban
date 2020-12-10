@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404
 
 from .models import (
     Attachment, AttachmentType, Board, Card, Container,
@@ -54,19 +55,38 @@ class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        return Member.objects.filter(board=self.kwargs['board_pk'])
+
+    # def list(self, request, board_pk=None):
+    #     queryset = Member.objects.filter(board=board_pk)
+    #     serializer = MemberSerializer(queryset, many=True, context={'request': request})
+    #     return Response(serializer.data)
+
+    # def retrieve(self, request, pk=None, board_pk=None):
+    #     queryset = Member.objects.filter(pk=pk, board=board_pk)
+    #     member = get_object_or_404(queryset, pk=pk)
+    #     serializer = MemberSerializer(member, context={'request': request})
+    #     return Response(serializer.data)
+
 
 class ContainerViewSet(viewsets.ModelViewSet):
     queryset = Container.objects.all()
     serializer_class = ContainerSerializer
 
-    def list(self, request, board_id=None):
-        # get all containers belonging to a board
-        containers = Container.objects.all().filter(board_id=board_id)
-        serializer = ContainerSerializer(data=containers)
-        if serializer.is_valid():
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+    def get_queryset(self, *args, **kwargs):
+        return Container.objects.filter(board=self.kwargs['board_pk'])
+
+    # def list(self, request, board_pk=None):
+    #     queryset = Container.objects.filter(board=board_pk)
+    #     serializer = ContainerSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+    # def retrieve(self, request, pk=None, board_pk=None):
+    #     queryset = Container.objects.filter(pk=pk, board=board_pk)
+    #     container = get_object_or_404(queryset, pk=pk)
+    #     serializer = ContainerSerializer(container)
+    #     return Response(serializer.data)
 
 
 class CardViewSet(viewsets.ModelViewSet):

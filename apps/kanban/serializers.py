@@ -1,5 +1,6 @@
 from rest_framework import serializers
-
+from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework_nested.relations import NestedHyperlinkedIdentityField
 from .models import (
     Attachment, AttachmentType, Board, Card,
     Container, KanBanUser, Label, Member, Tag
@@ -15,6 +16,21 @@ AUDITABLE_FIELDS = [
 
 
 class BoardSerializer(serializers.HyperlinkedModelSerializer):
+    members = HyperlinkedIdentityField(
+        view_name='board-members-list',
+        lookup_url_kwarg='board_pk'
+    )
+    
+    containers = HyperlinkedIdentityField(
+        view_name='board-containers-list',
+        lookup_url_kwarg='board_pk'
+    )
+    
+    # labels = HyperlinkedIdentityField(
+    #     view_name='board-labels-list',
+    #     lookup_url_kwarg='board_pk'
+    # )
+
     class Meta:
         model = Board
         fields = [
@@ -23,6 +39,8 @@ class BoardSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MemberSerializer(serializers.HyperlinkedModelSerializer):
+    url = NestedHyperlinkedIdentityField(view_name='board-members-detail', parent_lookup_kwargs={'board_pk': 'board__pk'})
+
     class Meta:
         model = Member
         fields = ['url', 'id', 'board', 'user', 'starred', 'position']
@@ -56,6 +74,8 @@ class AttachmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ContainerSerializer(serializers.HyperlinkedModelSerializer):
+    url = NestedHyperlinkedIdentityField(view_name='board-containers-detail', parent_lookup_kwargs={'board_pk': 'board__pk'})
+
     class Meta:
         model = Container
         fields = [
