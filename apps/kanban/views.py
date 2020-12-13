@@ -1,5 +1,4 @@
 from rest_framework import viewsets
-from rest_framework.generics import get_object_or_404
 
 from .models import (
     Attachment, AttachmentType, Board, Card, Container,
@@ -13,7 +12,7 @@ from .serializers import (
     )
 
 # from rest_framework.views import APIView
-from rest_framework.response import Response
+# from rest_framework.response import Response
 # from rest_framework import authentication, permissions
 # from django.contrib.auth.models import User
 
@@ -50,18 +49,6 @@ class BoardViewSet(viewsets.ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
 
-    # def list(self, request):
-    #     queryset = Board.objects.filter()
-    #     serializer = BoardSerializer(queryset, many=True,
-    #                                  context={'request': request})
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None):
-    #     queryset = Board.objects.filter()
-    #     board = get_object_or_404(queryset, pk=pk)
-    #     serializer = BoardSerializer(board, context={'request': request})
-    #     return Response(serializer.data)
-
 
 class MemberViewSet(viewsets.ModelViewSet):
     queryset = Member.objects.all()
@@ -69,18 +56,6 @@ class MemberViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, *args, **kwargs):
         return Member.objects.filter(board=self.kwargs['board_pk'])
-
-    # def list(self, request, board_pk=None):
-    #     queryset = Member.objects.filter(board=board_pk)
-    #     serializer = MemberSerializer(queryset, many=True,
-    #                                   context={'request': request})
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None, board_pk=None):
-    #     queryset = Member.objects.filter(pk=pk, board=board_pk)
-    #     member = get_object_or_404(queryset, pk=pk)
-    #     serializer = MemberSerializer(member, context={'request': request})
-    #     return Response(serializer.data)
 
 
 class ContainerViewSet(viewsets.ModelViewSet):
@@ -90,17 +65,6 @@ class ContainerViewSet(viewsets.ModelViewSet):
     def get_queryset(self, *args, **kwargs):
         return Container.objects.filter(board=self.kwargs['board_pk'])
 
-    # def list(self, request, board_pk=None):
-    #     queryset = Container.objects.filter(board=board_pk)
-    #     serializer = ContainerSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None, board_pk=None):
-    #     queryset = Container.objects.filter(pk=pk, board=board_pk)
-    #     container = get_object_or_404(queryset, pk=pk)
-    #     serializer = ContainerSerializer(container)
-    #     return Response(serializer.data)
-
 
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
@@ -109,18 +73,6 @@ class CardViewSet(viewsets.ModelViewSet):
     def get_queryset(self, *args, **kwargs):
         return Card.objects.filter(board=self.kwargs['board_pk'],
                                    container=self.kwargs['container_pk'])
-
-    def list(self, request, board_pk=None, container_pk=None):
-        queryset = Card.objects.filter(board=board_pk, container=container_pk)
-        serializer = CardSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None, board_pk=None, container_pk=None):
-        queryset = Card.objects.filter(board=board_pk, container=container_pk)
-        card = get_object_or_404(queryset, board=board_pk,
-                                 container=container_pk, pk=pk)
-        serializer = CardSerializer(card)
-        return Response(serializer.data)
 
 
 class AttachmentTypeViewSet(viewsets.ModelViewSet):
