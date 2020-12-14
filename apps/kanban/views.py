@@ -94,6 +94,9 @@ class LabelViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        return Label.objects.filter(board=self.kwargs['board_pk'])
+
 
 class KanBanUserViewSet(viewsets.ModelViewSet):
     queryset = KanBanUser.objects.all()

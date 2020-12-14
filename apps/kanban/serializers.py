@@ -10,8 +10,37 @@ AUDITABLE_FIELDS = [
     ]
 
 
-class BoardMemberSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Board to a Member."""
+# related model serializers
+
+class RelatedContainerSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Container."""
+    parent_lookup_kwargs = {'board_pk': 'board__pk'}
+
+    class Meta:
+        model = Container
+        fields = ('url', 'name')
+
+
+class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Board."""
+    parent_lookup_kwargs = {'pk': 'pk'}
+
+    class Meta:
+        model = Board
+        fields = ('url', 'name')
+
+
+class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Label"""
+    parent_lookup_kwargs = {'board_pk': 'board__pk'}
+
+    class Meta:
+        model = Label
+        fields = ('url', 'name')
+
+
+class RelatedMemberSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Member."""
     parent_lookup_kwargs = {
         'board_pk': 'board__pk'
     }
@@ -21,41 +50,8 @@ class BoardMemberSerializer(NestedHyperlinkedModelSerializer):
         fields = ('url',)
 
 
-class MemberBoardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Member to a Board."""
-    parent_lookup_kwargs = {
-        'pk': 'pk'
-    }
-
-    class Meta:
-        model = Board
-        fields = ('url', 'name')
-
-
-class BoardContainerSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Board to a Container."""
-    parent_lookup_kwargs = {
-        'board_pk': 'board__pk'
-    }
-
-    class Meta:
-        model = Container
-        fields = ('url', 'name')
-
-
-class ContainerBoardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Container to a Board."""
-    parent_lookup_kwargs = {
-        'pk': 'pk'
-    }
-
-    class Meta:
-        model = Board
-        fields = ('url', 'name')
-
-
-class ContainerCardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Container to a Card."""
+class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Card."""
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -65,49 +61,27 @@ class ContainerCardSerializer(NestedHyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
-class CardContainerSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Card to a Container."""
-    parent_lookup_kwargs = {'board_pk': 'board__pk'}
-
-    class Meta:
-        model = Container
-        fields = ('url', 'name')
-
-
-class CardBoardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Card to a Board."""
-    parent_lookup_kwargs = {'pk': 'pk'}
-
-    class Meta:
-        model = Board
-        fields = ('url', 'name')
-
-
-class MemberKanBanUserSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a Member to a KanBanUser."""
-    parent_lookup_kwargs = {'pk': 'pk'}
-
-    class Meta:
-        model = KanBanUser
-        fields = ('url', 'username')
-
+# model serializers
 
 class BoardSerializer(HyperlinkedModelSerializer):
     """Serialize a Board object."""
-    containers = BoardContainerSerializer(many=True, read_only=True)
-    # members = BoardMemberSerializer(many=True, read_only=True)
+    containers = RelatedContainerSerializer(many=True, )
+    labels = RelatedLabelSerialzer(many=True, )
+    # members = RelatedMemberSerializer(many=True, )
+    # parent_lookup_kwargs = {'pk': 'pk'}
 
     class Meta:
         model = Board
         fields = [
-            'url', 'id', 'name', 'slug', 'position', 'containers', 'members'
+            'url', 'id', 'name', 'slug', 'position',
+            'containers', 'members', 'labels'
             ] + AUDITABLE_FIELDS
 
 
 class MemberSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Member object."""
-    board = MemberBoardSerializer(read_only=True)
-    user = MemberKanBanUserSerializer(read_only=True)
+    # board = RelatedBoardSerializer()
+    # user = MemberKanBanUserSerializer()
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -117,8 +91,9 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    board = ContainerBoardSerializer(many=False, read_only=True)
-    cards = ContainerCardSerializer(many=True, read_only=True)
+    board = RelatedBoardSerializer(many=False, )
+    cards = RelatedCardSerializer(many=True, )
+    labels = RelatedLabelSerialzer(many=True, )
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -131,8 +106,9 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
-    container = CardContainerSerializer(read_only=True)
-    board = CardBoardSerializer(read_only=True)
+    container = RelatedContainerSerializer()
+    board = RelatedBoardSerializer()
+    labels = RelatedLabelSerialzer(many=True, )
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -153,8 +129,11 @@ class TagSerializer(HyperlinkedModelSerializer):
         fields = ['url', 'id', 'user', 'name', 'color']
 
 
-class LabelSerializer(HyperlinkedModelSerializer):
+class LabelSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Label object."""
+    board = RelatedBoardSerializer()
+    parent_lookup_kwargs = {'board_pk': 'board__pk'}
+
     class Meta:
         model = Label
         fields = ['url', 'id', 'board', 'name', 'color']
@@ -179,6 +158,7 @@ class AttachmentSerializer(HyperlinkedModelSerializer):
 
 class KanBanUserSerializer(HyperlinkedModelSerializer):
     """Serialize a KanBanUser object."""
+
     class Meta:
         model = KanBanUser
         fields = [
