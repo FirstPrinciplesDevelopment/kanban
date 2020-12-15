@@ -85,10 +85,10 @@ class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
 
 class BoardSerializer(HyperlinkedModelSerializer):
     """Serialize a Board object."""
-    containers = RelatedContainerSerializer(many=True)
-    labels = RelatedLabelSerialzer(many=True)
-    attachments = RelatedAttachmentSerializer(many=True)
-    members = RelatedMemberSerializer(many=True)
+    containers = RelatedContainerSerializer(many=True, required=False)
+    labels = RelatedLabelSerialzer(many=True, required=False)
+    attachments = RelatedAttachmentSerializer(many=True, required=False)
+    members = RelatedMemberSerializer(many=True, required=False)
 
     class Meta:
         model = Board
@@ -109,10 +109,10 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    board = RelatedBoardSerializer(many=False)
-    cards = RelatedCardSerializer(many=True)
-    labels = RelatedLabelSerialzer(many=True)
-    tags = RelatedTagSerializer(many=True)
+    board = RelatedBoardSerializer()
+    cards = RelatedCardSerializer(many=True, required=False)
+    labels = RelatedLabelSerialzer(many=True, required=False)
+    tags = RelatedTagSerializer(many=True, required=False)
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -127,9 +127,9 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
     container = RelatedContainerSerializer()
     board = RelatedBoardSerializer()
-    labels = RelatedLabelSerialzer(many=True)
-    tags = RelatedTagSerializer(many=True)
-    attachments = RelatedAttachmentSerializer(many=True)
+    labels = RelatedLabelSerialzer(many=True, required=False)
+    tags = RelatedTagSerializer(many=True, required=False)
+    attachments = RelatedAttachmentSerializer(many=True, required=False)
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -185,8 +185,8 @@ class AttachmentSerializer(NestedHyperlinkedModelSerializer):
 
 class KanBanUserSerializer(HyperlinkedModelSerializer):
     """Serialize a KanBanUser object."""
-    tags = RelatedTagSerializer(many=True)
-    memberships = RelatedMemberSerializer(many=True)
+    tags = RelatedTagSerializer(many=True, required=False)
+    memberships = RelatedMemberSerializer(many=True, required=False)
 
     class Meta:
         model = KanBanUser

@@ -1,5 +1,6 @@
 from django.urls import include, path
-from rest_framework_nested import routers
+from rest_framework.routers import DefaultRouter
+from rest_framework_nested.routers import NestedDefaultRouter
 
 from .views import (
     KanBanUserViewSet, AttachmentViewSet, BoardViewSet,
@@ -7,12 +8,12 @@ from .views import (
 )
 
 
-router = routers.DefaultRouter()
+router = DefaultRouter()
 router.register(r'boards', BoardViewSet)
 # /boards/
 # /boards/{user_pk}/
 
-boards_router = routers.NestedDefaultRouter(
+boards_router = NestedDefaultRouter(
     router, r'boards', lookup='board'
     )
 boards_router.register(r'members', MemberViewSet)
@@ -28,7 +29,7 @@ boards_router.register(r'containers', ContainerViewSet)
 # /boards/{board_pk}/containers/
 # /boards/{board_pk}/containers/{container_pk}/
 
-containers_router = routers.NestedDefaultRouter(
+containers_router = NestedDefaultRouter(
     boards_router, r'containers', lookup='container'
     )
 containers_router.register(r'cards', CardViewSet)
@@ -39,7 +40,7 @@ router.register(r'users', KanBanUserViewSet)
 # /users/
 # /users/{user_pk}/
 
-user_router = routers.NestedDefaultRouter(
+user_router = NestedDefaultRouter(
     router, 'users', lookup='user'
 )
 user_router.register(r'tags', TagViewSet)
