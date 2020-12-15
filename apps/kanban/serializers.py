@@ -85,11 +85,10 @@ class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
 
 class BoardSerializer(HyperlinkedModelSerializer):
     """Serialize a Board object."""
-    containers = RelatedContainerSerializer(many=True, )
-    labels = RelatedLabelSerialzer(many=True, )
-    attachments = RelatedAttachmentSerializer(many=True, )
-    members = RelatedMemberSerializer(many=True, )
-    # parent_lookup_kwargs = {'pk': 'pk'}
+    containers = RelatedContainerSerializer(many=True)
+    labels = RelatedLabelSerialzer(many=True)
+    attachments = RelatedAttachmentSerializer(many=True)
+    members = RelatedMemberSerializer(many=True)
 
     class Meta:
         model = Board
@@ -101,8 +100,6 @@ class BoardSerializer(HyperlinkedModelSerializer):
 
 class MemberSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Member object."""
-    # board = RelatedBoardSerializer()
-    # user = MemberKanBanUserSerializer()
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -112,9 +109,9 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    board = RelatedBoardSerializer(many=False, )
-    cards = RelatedCardSerializer(many=True, )
-    labels = RelatedLabelSerialzer(many=True, )
+    board = RelatedBoardSerializer(many=False)
+    cards = RelatedCardSerializer(many=True)
+    labels = RelatedLabelSerialzer(many=True)
     tags = RelatedTagSerializer(many=True)
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
@@ -130,7 +127,7 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
     container = RelatedContainerSerializer()
     board = RelatedBoardSerializer()
-    labels = RelatedLabelSerialzer(many=True, )
+    labels = RelatedLabelSerialzer(many=True)
     tags = RelatedTagSerializer(many=True)
     attachments = RelatedAttachmentSerializer(many=True)
     parent_lookup_kwargs = {
@@ -174,7 +171,7 @@ class AttachmentTypeSerializer(ModelSerializer):
 
 class AttachmentSerializer(NestedHyperlinkedModelSerializer):
     """Serialize an Attachment object."""
-    board = RelatedBoardSerializer(many=False, )
+    board = RelatedBoardSerializer(many=False)
     attachment_type = AttachmentTypeSerializer()
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
