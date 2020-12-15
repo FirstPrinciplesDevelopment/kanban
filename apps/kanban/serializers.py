@@ -1,5 +1,7 @@
-from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework.serializers import (HyperlinkedModelSerializer,
+                                        ModelSerializer)
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
+
 from .models import (Attachment, AttachmentType, Board, Card, Container,
                      KanBanUser, Label, Member, Tag)
 
@@ -70,12 +72,22 @@ class RelatedTagSerializer(NestedHyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
+class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Attachment"""
+    parent_lookup_kwargs = {'board_pk': 'board__pk'}
+
+    class Meta:
+        model = Attachment
+        fields = ('url', 'name', 'file_path')
+
+
 # model serializers
 
 class BoardSerializer(HyperlinkedModelSerializer):
     """Serialize a Board object."""
     containers = RelatedContainerSerializer(many=True, )
     labels = RelatedLabelSerialzer(many=True, )
+    attachments = RelatedAttachmentSerializer(many=True, )
     # members = RelatedMemberSerializer(many=True, )
     # parent_lookup_kwargs = {'pk': 'pk'}
 
@@ -83,7 +95,7 @@ class BoardSerializer(HyperlinkedModelSerializer):
         model = Board
         fields = [
             'url', 'id', 'name', 'slug', 'position',
-            'containers', 'members', 'labels'
+            'containers', 'members', 'labels', 'attachments'
             ] + AUDITABLE_FIELDS
 
 
@@ -152,15 +164,19 @@ class LabelSerializer(NestedHyperlinkedModelSerializer):
         fields = ['url', 'id', 'board', 'name', 'color']
 
 
-class AttachmentTypeSerializer(HyperlinkedModelSerializer):
+class AttachmentTypeSerializer(ModelSerializer):
     """Serialize an AttachmentType object."""
     class Meta:
         model = AttachmentType
-        fields = ['url', 'id', 'name', 'file_extension']
+        fields = ['id', 'name', 'file_extension']
 
 
-class AttachmentSerializer(HyperlinkedModelSerializer):
+class AttachmentSerializer(NestedHyperlinkedModelSerializer):
     """Serialize an Attachment object."""
+    board = RelatedBoardSerializer(many=False, )
+    attachment_type = AttachmentTypeSerializer()
+    parent_lookup_kwargs = {'board_pk': 'board__pk'}
+
     class Meta:
         model = Attachment
         fields = [

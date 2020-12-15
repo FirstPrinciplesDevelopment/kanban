@@ -24,6 +24,9 @@ boards_router.register(r'containers', ContainerViewSet)
 boards_router.register(r'labels', LabelViewSet)
 # /boards/{board_pk}/labels/
 # /boards/{board_pk}/labels/{label_pk}/
+boards_router.register(r'attachments', AttachmentViewSet)
+# /boards/{board_pk}/attachments/
+# /boards/{board_pk}/attachments/{attachment_pk}/
 
 containers_router = routers.NestedDefaultRouter(
     boards_router, r'containers', lookup='container'
@@ -42,10 +45,6 @@ user_router = routers.NestedDefaultRouter(
 user_router.register(r'tags', TagViewSet)
 # /users/{user_pk}/tags/
 # /users/{user_pk}/tags/{tag_pk}
-
-router.register(r'attachments', AttachmentViewSet)
-router.register(r'attachments', AttachmentTypeViewSet)
-# router.register(r'tags', TagViewSet)
 
 
 urlpatterns = [

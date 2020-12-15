@@ -126,7 +126,8 @@ class AttachmentType(models.Model):
 class Attachment(models.Model):
     """An Attachment is a file uploaded by a Member of a Board"""
     board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, blank=False, null=False
+        Board, related_name='attachments', on_delete=models.CASCADE,
+        blank=False, null=False
         )
     name = models.CharField(
         max_length=50, unique=True, blank=False, null=False
