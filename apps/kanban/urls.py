@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework_nested import routers
 
 from .views import (
-    KanBanUserViewSet, AttachmentTypeViewSet, AttachmentViewSet, BoardViewSet,
+    KanBanUserViewSet, AttachmentViewSet, BoardViewSet,
     CardViewSet, ContainerViewSet, LabelViewSet, MemberViewSet, TagViewSet
 )
 
@@ -18,15 +18,15 @@ boards_router = routers.NestedDefaultRouter(
 boards_router.register(r'members', MemberViewSet)
 # /boards/{board_pk}/members/
 # /boards/{board_pk}/members/{member_pk}/
-boards_router.register(r'containers', ContainerViewSet)
-# /boards/{board_pk}/containers/
-# /boards/{board_pk}/containers/{container_pk}/
 boards_router.register(r'labels', LabelViewSet)
 # /boards/{board_pk}/labels/
 # /boards/{board_pk}/labels/{label_pk}/
 boards_router.register(r'attachments', AttachmentViewSet)
 # /boards/{board_pk}/attachments/
 # /boards/{board_pk}/attachments/{attachment_pk}/
+boards_router.register(r'containers', ContainerViewSet)
+# /boards/{board_pk}/containers/
+# /boards/{board_pk}/containers/{container_pk}/
 
 containers_router = routers.NestedDefaultRouter(
     boards_router, r'containers', lookup='container'

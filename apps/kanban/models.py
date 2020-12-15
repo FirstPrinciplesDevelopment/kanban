@@ -52,7 +52,6 @@ class Board(Auditable):
         )
     slug = models.SlugField(max_length=50, unique=True, blank=True, null=False)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
-    members = models.ManyToManyField(KanBanUser, through='Member')
 
     def __str__(self):
         return self.name
@@ -61,10 +60,12 @@ class Board(Auditable):
 class Member(models.Model):
     """
     A Member maps a KanBanUser to a Board,
-    it is the explicit through table for that many-to-many
+    it is analogous to a through table for that many-to-many
     """
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, null=False)
-    user = models.ForeignKey(KanBanUser, on_delete=models.CASCADE, null=False)
+    board = models.ForeignKey(Board, related_name='members',
+                              on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(KanBanUser, related_name='memberships',
+                             on_delete=models.CASCADE, null=False)
     starred = models.BooleanField(default=False, blank=True, null=False)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
 

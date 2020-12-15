@@ -49,7 +49,7 @@ class RelatedMemberSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('url',)
+        fields = ('url', 'board')
 
 
 class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
@@ -88,7 +88,7 @@ class BoardSerializer(HyperlinkedModelSerializer):
     containers = RelatedContainerSerializer(many=True, )
     labels = RelatedLabelSerialzer(many=True, )
     attachments = RelatedAttachmentSerializer(many=True, )
-    # members = RelatedMemberSerializer(many=True, )
+    members = RelatedMemberSerializer(many=True, )
     # parent_lookup_kwargs = {'pk': 'pk'}
 
     class Meta:
@@ -132,6 +132,7 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     board = RelatedBoardSerializer()
     labels = RelatedLabelSerialzer(many=True, )
     tags = RelatedTagSerializer(many=True)
+    attachments = RelatedAttachmentSerializer(many=True)
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -188,10 +189,11 @@ class AttachmentSerializer(NestedHyperlinkedModelSerializer):
 class KanBanUserSerializer(HyperlinkedModelSerializer):
     """Serialize a KanBanUser object."""
     tags = RelatedTagSerializer(many=True)
+    memberships = RelatedMemberSerializer(many=True)
 
     class Meta:
         model = KanBanUser
         fields = [
             'url', 'id', 'username', 'first_name', 'last_name', 'email',
-            'is_staff', 'is_active', 'tags'
+            'is_staff', 'is_active', 'tags', 'memberships'
             ]
