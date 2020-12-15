@@ -89,6 +89,9 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        return Tag.objects.filter(user=self.kwargs['user_pk'])
+
 
 class LabelViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()

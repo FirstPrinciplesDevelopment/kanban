@@ -80,7 +80,8 @@ class Member(models.Model):
 class Tag(models.Model):
     """A Tag is only visible to the KanBanUser that created it"""
     user = models.ForeignKey(
-        KanBanUser, on_delete=models.CASCADE, blank=False, null=False
+        KanBanUser, related_name='tags', on_delete=models.CASCADE,
+        blank=False, null=False
         )
     name = models.CharField(
         max_length=50, unique=True, blank=False, null=False

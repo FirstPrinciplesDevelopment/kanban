@@ -61,6 +61,15 @@ class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
+class RelatedTagSerializer(NestedHyperlinkedModelSerializer):
+    """Serialize the relationship from a related model to a Tag"""
+    parent_lookup_kwargs = {'user_pk': 'user__pk'}
+
+    class Meta:
+        model = Tag
+        fields = ('url', 'name')
+
+
 # model serializers
 
 class BoardSerializer(HyperlinkedModelSerializer):
@@ -94,6 +103,7 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
     board = RelatedBoardSerializer(many=False, )
     cards = RelatedCardSerializer(many=True, )
     labels = RelatedLabelSerialzer(many=True, )
+    tags = RelatedTagSerializer(many=True)
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -109,6 +119,7 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     container = RelatedContainerSerializer()
     board = RelatedBoardSerializer()
     labels = RelatedLabelSerialzer(many=True, )
+    tags = RelatedTagSerializer(many=True)
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -122,8 +133,10 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
             ] + AUDITABLE_FIELDS
 
 
-class TagSerializer(HyperlinkedModelSerializer):
+class TagSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Tag object."""
+    parent_lookup_kwargs = {'user_pk': 'user__pk'}
+
     class Meta:
         model = Tag
         fields = ['url', 'id', 'user', 'name', 'color']
@@ -158,10 +171,11 @@ class AttachmentSerializer(HyperlinkedModelSerializer):
 
 class KanBanUserSerializer(HyperlinkedModelSerializer):
     """Serialize a KanBanUser object."""
+    tags = RelatedTagSerializer(many=True)
 
     class Meta:
         model = KanBanUser
         fields = [
             'url', 'id', 'username', 'first_name', 'last_name', 'email',
-            'is_staff', 'is_active'
+            'is_staff', 'is_active', 'tags'
             ]

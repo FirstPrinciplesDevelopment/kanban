@@ -10,7 +10,7 @@ from .views import (
 router = routers.DefaultRouter()
 router.register(r'boards', BoardViewSet)
 # /boards/
-# /boards/{pk}/
+# /boards/{user_pk}/
 
 boards_router = routers.NestedDefaultRouter(
     router, r'boards', lookup='board'
@@ -32,13 +32,25 @@ containers_router.register(r'cards', CardViewSet)
 # /boards/{board_pk}/containers/{container_pk}/cards/
 # /boards/{board_pk}/containers/{container_pk}/cards/{card_pk}/
 
+router.register(r'users', KanBanUserViewSet)
+# /users/
+# /users/{user_pk}/
+
+user_router = routers.NestedDefaultRouter(
+    router, 'users', lookup='user'
+)
+user_router.register(r'tags', TagViewSet)
+# /users/{user_pk}/tags/
+# /users/{user_pk}/tags/{tag_pk}
+
 router.register(r'attachments', AttachmentViewSet)
 router.register(r'attachments', AttachmentTypeViewSet)
-router.register(r'tags', TagViewSet)
-router.register(r'users', KanBanUserViewSet)
+# router.register(r'tags', TagViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(boards_router.urls)),
-    path('', include(containers_router.urls))
+    path('', include(containers_router.urls)),
+    path('', include(user_router.urls))
 ]
