@@ -1,12 +1,11 @@
 from django.urls import include, path
+from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
 
-from .views import (
-    KanBanUserViewSet, AttachmentViewSet, BoardViewSet,
-    CardViewSet, ContainerViewSet, LabelViewSet, MemberViewSet, TagViewSet
-)
-
+from .views import (AttachmentViewSet, BoardViewSet, CardViewSet,
+                    ContainerViewSet, KanBanUserViewSet, LabelViewSet,
+                    MemberViewSet, TagViewSet)
 
 router = DefaultRouter()
 router.register(r'boards', BoardViewSet)
@@ -49,6 +48,7 @@ user_router.register(r'tags', TagViewSet)
 
 
 urlpatterns = [
+    path('auth/', obtain_auth_token),
     path('', include(router.urls)),
     path('', include(boards_router.urls)),
     path('', include(containers_router.urls)),
