@@ -56,10 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'apps.kanban',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -166,3 +168,8 @@ REST_FRAMEWORK = {
 # auth Customization
 
 AUTH_USER_MODEL = 'kanban.KanBanUser'
+
+
+# This should be changed once we put this in production.
+# In production, whitelist: https://stackoverflow.com/a/22360893/10307728
+CORS_ORIGIN_ALLOW_ALL = True
