@@ -20,7 +20,7 @@ class RelatedContainerSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Container
-        fields = ('url', 'name')
+        fields = ('url', 'id', 'name')
 
 
 class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
@@ -29,7 +29,7 @@ class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Board
-        fields = ('url', 'name')
+        fields = ('url', 'id', 'name')
 
 
 class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
@@ -38,7 +38,7 @@ class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Label
-        fields = ('url', 'name')
+        fields = ('url', 'id', 'name')
 
 
 class RelatedMemberSerializer(NestedHyperlinkedModelSerializer):
@@ -49,7 +49,7 @@ class RelatedMemberSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('url', 'board')
+        fields = ('url', 'id', 'board')
 
 
 class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
@@ -60,7 +60,7 @@ class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Card
-        fields = ('url', 'name')
+        fields = ('url', 'id', 'name')
 
 
 class RelatedTagSerializer(NestedHyperlinkedModelSerializer):
@@ -69,7 +69,7 @@ class RelatedTagSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Tag
-        fields = ('url', 'name')
+        fields = ('url', 'id', 'name')
 
 
 class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
@@ -78,7 +78,7 @@ class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Attachment
-        fields = ('url', 'name', 'file_path')
+        fields = ('url', 'id', 'name', 'file_path')
 
 
 # model serializers
