@@ -5,9 +5,12 @@ from rest_framework_nested.routers import NestedDefaultRouter
 
 from .views import (AttachmentViewSet, BoardViewSet, CardViewSet,
                     ContainerViewSet, KanBanUserViewSet, LabelViewSet,
-                    MemberViewSet, TagViewSet)
+                    MemberViewSet, NormalizedViewSet, TagViewSet)
 
 router = DefaultRouter()
+router.register(r'normalized', NormalizedViewSet, basename="normalized")
+# /normalized/
+
 router.register(r'boards', BoardViewSet)
 # /boards/
 # /boards/{user_pk}/

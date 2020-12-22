@@ -1,5 +1,5 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        ModelSerializer)
+                                        ModelSerializer, Serializer)
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from .models import (Attachment, AttachmentType, Board, Card, Container,
@@ -194,3 +194,19 @@ class KanBanUserSerializer(HyperlinkedModelSerializer):
             'url', 'id', 'username', 'first_name', 'last_name', 'email',
             'is_staff', 'is_active', 'tags', 'memberships'
             ]
+
+
+class NormalizedSerializer(Serializer):
+    """
+    Serialize all the entities needed by a user.
+
+    response is flattened (normalized) for easy consumption by a frontend.
+    """
+    boards = BoardSerializer(many=True, read_only=True)
+    containers = ContainerSerializer(many=True, read_only=True)
+    cards = CardSerializer(many=True, read_only=True)
+    users = KanBanUserSerializer(many=True, read_only=True)
+    labels = LabelSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    members = MemberSerializer(many=True, read_only=True)
