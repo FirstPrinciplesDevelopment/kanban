@@ -29,7 +29,7 @@ class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Board
-        fields = ('url', 'id', 'name')
+        fields = ('url', 'id')
 
 
 class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
@@ -121,6 +121,19 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
              'url', 'id', 'board', 'name', 'slug',
              'position', 'cards', 'labels', 'tags'
             ] + AUDITABLE_FIELDS
+
+    def create(self, validated_data):
+        # board_data = validated_data.pop('board')
+        print("create container")
+        print(validated_data)
+        container = Container.objects.create(**validated_data)
+        return container
+
+    def update(self, instance, validated_data):
+        # Unless the application properly enforces that this field is
+        # always set, the following could raise a `DoesNotExist`, which
+        # would need to be handled.
+        return instance
 
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
