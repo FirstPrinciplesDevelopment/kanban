@@ -109,7 +109,6 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    board = RelatedBoardSerializer()
     cards = RelatedCardSerializer(many=True, required=False)
     labels = RelatedLabelSerialzer(many=True, required=False)
     tags = RelatedTagSerializer(many=True, required=False)
