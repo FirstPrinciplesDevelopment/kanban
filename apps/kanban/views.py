@@ -1,3 +1,4 @@
+from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.authentication import (SessionAuthentication,
                                            TokenAuthentication)
@@ -7,7 +8,8 @@ from .models import (Attachment, AttachmentType, Board, Card, Container,
 from .serializers import (AttachmentSerializer, AttachmentTypeSerializer,
                           BoardSerializer, CardSerializer, ContainerSerializer,
                           KanBanUserSerializer, LabelSerializer,
-                          MemberSerializer, TagSerializer)
+                          MemberSerializer, NormalizedSerializer,
+                          TagSerializer)
 
 # from rest_framework.views import APIView
 # from rest_framework.response import Response
@@ -41,6 +43,25 @@ from .serializers import (AttachmentSerializer, AttachmentTypeSerializer,
 
 #     def destroy(self, request, pk=None):
 #         pass
+
+
+class NormalizedViewSet(viewsets.ViewSet):
+    # TODO: make pk into user identifier (auth token)
+    def list(self, request, pk=None):
+        entities = {
+            "boards": Board.objects.all(),
+            "containers": Container.objects.all(),
+            "cards": Card.objects.all(),
+            "members": Member.objects.all(),
+            "tags": Tag.objects.all(),
+            "labels": Label.objects.all(),
+            "attachments": Attachment.objects.all(),
+            "users": KanBanUser.objects.all()
+        }
+        serializer = NormalizedSerializer(
+            entities, context={'request': request}
+            )
+        return Response(serializer.data)
 
 
 class BoardViewSet(viewsets.ModelViewSet):

@@ -1,5 +1,5 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
-                                        ModelSerializer)
+                                        ModelSerializer, Serializer)
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from .models import (Attachment, AttachmentType, Board, Card, Container,
@@ -29,7 +29,7 @@ class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
 
     class Meta:
         model = Board
-        fields = ('url', 'id', 'name')
+        fields = ('url', 'id')
 
 
 class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
@@ -109,7 +109,6 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    board = RelatedBoardSerializer()
     cards = RelatedCardSerializer(many=True, required=False)
     labels = RelatedLabelSerialzer(many=True, required=False)
     tags = RelatedTagSerializer(many=True, required=False)
@@ -121,6 +120,19 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
              'url', 'id', 'board', 'name', 'slug',
              'position', 'cards', 'labels', 'tags'
             ] + AUDITABLE_FIELDS
+
+    def create(self, validated_data):
+        # board_data = validated_data.pop('board')
+        print("create container")
+        print(validated_data)
+        container = Container.objects.create(**validated_data)
+        return container
+
+    def update(self, instance, validated_data):
+        # Unless the application properly enforces that this field is
+        # always set, the following could raise a `DoesNotExist`, which
+        # would need to be handled.
+        return instance
 
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
@@ -194,3 +206,19 @@ class KanBanUserSerializer(HyperlinkedModelSerializer):
             'url', 'id', 'username', 'first_name', 'last_name', 'email',
             'is_staff', 'is_active', 'tags', 'memberships'
             ]
+
+
+class NormalizedSerializer(Serializer):
+    """
+    Serialize all the entities needed by a user.
+
+    response is flattened (normalized) for easy consumption by a frontend.
+    """
+    boards = BoardSerializer(many=True, read_only=True)
+    containers = ContainerSerializer(many=True, read_only=True)
+    cards = CardSerializer(many=True, read_only=True)
+    users = KanBanUserSerializer(many=True, read_only=True)
+    labels = LabelSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, read_only=True)
+    members = MemberSerializer(many=True, read_only=True)
