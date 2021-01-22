@@ -122,9 +122,6 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
             ] + AUDITABLE_FIELDS
 
     def create(self, validated_data):
-        # board_data = validated_data.pop('board')
-        print("create container")
-        print(validated_data)
         container = Container.objects.create(**validated_data)
         return container
 
@@ -137,8 +134,6 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
-    container = RelatedContainerSerializer()
-    board = RelatedBoardSerializer()
     labels = RelatedLabelSerialzer(many=True, required=False)
     tags = RelatedTagSerializer(many=True, required=False)
     attachments = RelatedAttachmentSerializer(many=True, required=False)
@@ -153,6 +148,10 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
              'start_time', 'end_time', 'complexity', 'hours', 'position',
              'assigned_users', 'labels', 'tags', 'attachments'
             ] + AUDITABLE_FIELDS
+
+    def create(self, validated_data):
+        card = Card.objects.create(**validated_data)
+        return card
 
 
 class TagSerializer(NestedHyperlinkedModelSerializer):
