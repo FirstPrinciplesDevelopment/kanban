@@ -32,6 +32,21 @@ def max_container_position(board_id: int) -> int:
         raise Exception('Invalid board id passed in')
 
 
+def max_card_position(container_id: int) -> int:
+    if container_id > 0:
+        # return the max card position for this container
+        query_result = (
+            Card
+            .objects
+            .filter(container__pk=container_id)
+            .aggregate(Max('position'))
+        )
+        # query_result is a dict, return just the int value
+        return query_result['position__max']
+    else:
+        raise Exception('Invalid container id passed in')
+
+
 class KanBanUser(AbstractUser):
     # add additional fields in here
 
@@ -237,3 +252,13 @@ class Card(Auditable):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.position:
+            # get the max position of a cards in this card's containers
+            max_position = max_card_position(self.container_id)
+            # increment that max position
+            new_position = max_position + 1
+            # set self.position
+            self.position = new_position
+        return super().save(*args, **kwargs)
