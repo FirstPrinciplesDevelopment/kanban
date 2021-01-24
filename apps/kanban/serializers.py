@@ -126,12 +126,6 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
         container = Container.objects.create(**validated_data)
         return container
 
-    def update(self, instance, validated_data):
-        # Unless the application properly enforces that this field is
-        # always set, the following could raise a `DoesNotExist`, which
-        # would need to be handled.
-        return instance
-
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
