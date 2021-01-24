@@ -95,7 +95,7 @@ class CardViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def get_queryset(self, *args, **kwargs):
-        return Card.objects.filter(board=self.kwargs['board_pk'],
+        return Card.objects.filter(container__board=self.kwargs['board_pk'],
                                    container=self.kwargs['container_pk'])
 
 

@@ -145,7 +145,7 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Card
         fields = [
-            'url', 'id', 'board', 'container', 'name', 'slug', 'content',
+            'url', 'id', 'container', 'name', 'slug', 'content',
             'start_time', 'end_time', 'complexity', 'hours', 'position',
             'assigned_users', 'labels', 'tags', 'attachments'
         ] + AUDITABLE_FIELDS

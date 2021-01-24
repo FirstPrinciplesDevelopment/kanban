@@ -221,10 +221,7 @@ class Container(Auditable):
 
 
 class Card(Auditable):
-    """The most fundamental KanBan unit, and represents an item, task."""
-    board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, blank=False, null=False
-    )
+    """The most fundamental KanBan unit, represents an item or task."""
     container = models.ForeignKey(
         Container, related_name='cards', on_delete=models.CASCADE,
         blank=False, null=False
