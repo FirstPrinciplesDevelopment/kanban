@@ -56,6 +56,7 @@ class NormalizedViewSet(viewsets.ViewSet):
             "tags": Tag.objects.all(),
             "labels": Label.objects.all(),
             "attachments": Attachment.objects.all(),
+            "attachment_types": AttachmentType.objects.all(),
             "users": KanBanUser.objects.all()
         }
         serializer = NormalizedSerializer(

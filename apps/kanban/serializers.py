@@ -1,3 +1,4 @@
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         ModelSerializer, Serializer)
 from rest_framework_nested.relations import NestedHyperlinkedRelatedField
@@ -165,7 +166,6 @@ class TagSerializer(NestedHyperlinkedModelSerializer):
 
 class LabelSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Label object."""
-    board = RelatedBoardSerializer()
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -182,8 +182,9 @@ class AttachmentTypeSerializer(ModelSerializer):
 
 class AttachmentSerializer(NestedHyperlinkedModelSerializer):
     """Serialize an Attachment object."""
-    board = RelatedBoardSerializer(many=False)
-    attachment_type = AttachmentTypeSerializer()
+    attachment_type = PrimaryKeyRelatedField(
+        queryset=AttachmentType.objects.all()
+    )
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -220,4 +221,5 @@ class NormalizedSerializer(Serializer):
     labels = LabelSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     attachments = AttachmentSerializer(many=True, read_only=True)
+    attachment_types = AttachmentTypeSerializer(many=True, read_only=True)
     members = MemberSerializer(many=True, read_only=True)
