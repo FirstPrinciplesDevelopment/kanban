@@ -1,5 +1,6 @@
 from rest_framework.serializers import (HyperlinkedModelSerializer,
                                         ModelSerializer, Serializer)
+from rest_framework_nested.relations import NestedHyperlinkedRelatedField
 from rest_framework_nested.serializers import NestedHyperlinkedModelSerializer
 
 from .models import (Attachment, AttachmentType, Board, Card, Container,
@@ -9,7 +10,7 @@ from .models import (Attachment, AttachmentType, Board, Card, Container,
 AUDITABLE_FIELDS = [
     'created_by', 'created_time', 'changed_by', 'changed_time',
     'archived', 'archived_by', 'archived_time'
-    ]
+]
 
 
 # related model serializers
@@ -95,7 +96,7 @@ class BoardSerializer(HyperlinkedModelSerializer):
         fields = [
             'url', 'id', 'name', 'slug', 'position',
             'containers', 'members', 'labels', 'attachments'
-            ] + AUDITABLE_FIELDS
+        ] + AUDITABLE_FIELDS
 
 
 class MemberSerializer(NestedHyperlinkedModelSerializer):
@@ -117,9 +118,9 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Container
         fields = [
-             'url', 'id', 'board', 'name', 'slug',
-             'position', 'cards', 'labels', 'tags'
-            ] + AUDITABLE_FIELDS
+            'url', 'id', 'board', 'name', 'slug',
+            'position', 'cards', 'labels', 'tags'
+        ] + AUDITABLE_FIELDS
 
     def create(self, validated_data):
         container = Container.objects.create(**validated_data)
@@ -134,6 +135,11 @@ class ContainerSerializer(NestedHyperlinkedModelSerializer):
 
 class CardSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Card object."""
+    container = NestedHyperlinkedRelatedField(
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='container-detail',
+        queryset=Container.objects.all()
+    )
     labels = RelatedLabelSerialzer(many=True, required=False)
     tags = RelatedTagSerializer(many=True, required=False)
     attachments = RelatedAttachmentSerializer(many=True, required=False)
@@ -144,10 +150,10 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Card
         fields = [
-             'url', 'id', 'board', 'container', 'name', 'slug', 'content',
-             'start_time', 'end_time', 'complexity', 'hours', 'position',
-             'assigned_users', 'labels', 'tags', 'attachments'
-            ] + AUDITABLE_FIELDS
+            'url', 'id', 'board', 'container', 'name', 'slug', 'content',
+            'start_time', 'end_time', 'complexity', 'hours', 'position',
+            'assigned_users', 'labels', 'tags', 'attachments'
+        ] + AUDITABLE_FIELDS
 
     def create(self, validated_data):
         card = Card.objects.create(**validated_data)
@@ -189,9 +195,9 @@ class AttachmentSerializer(NestedHyperlinkedModelSerializer):
     class Meta:
         model = Attachment
         fields = [
-             'url', 'id', 'board', 'name', 'file_path', 'attachment_type',
-             'uploaded_by', 'uploaded_time'
-            ]
+            'url', 'id', 'board', 'name', 'file_path', 'attachment_type',
+            'uploaded_by', 'uploaded_time'
+        ]
 
 
 class KanBanUserSerializer(HyperlinkedModelSerializer):
@@ -204,7 +210,7 @@ class KanBanUserSerializer(HyperlinkedModelSerializer):
         fields = [
             'url', 'id', 'username', 'first_name', 'last_name', 'email',
             'is_staff', 'is_active', 'tags', 'memberships'
-            ]
+        ]
 
 
 class NormalizedSerializer(Serializer):
