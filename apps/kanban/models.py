@@ -26,8 +26,11 @@ def max_container_position(board_id: int) -> int:
             .filter(board__pk=board_id)
             .aggregate(Max('position'))
         )
-        # query_result is a dict, return just the int value
-        return query_result['position__max']
+        # query_result is a dict, return just the int value or zero if None
+        if query_result['position__max'] is None:
+            return 0
+        else:
+            return query_result['position__max']
     else:
         raise Exception('Invalid board id passed in')
 
@@ -41,8 +44,11 @@ def max_card_position(container_id: int) -> int:
             .filter(container__pk=container_id)
             .aggregate(Max('position'))
         )
-        # query_result is a dict, return just the int value
-        return query_result['position__max']
+        # query_result is a dict, return just the int value or zero if None
+        if query_result['position__max'] is None:
+            return 0
+        else:
+            return query_result['position__max']
     else:
         raise Exception('Invalid container id passed in')
 
