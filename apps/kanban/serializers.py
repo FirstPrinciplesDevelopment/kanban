@@ -136,7 +136,12 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
         queryset=Container.objects.all()
     )
     labels = RelatedLabelSerialzer(many=True, required=False)
-    tags = RelatedTagSerializer(many=True, required=False)
+    tags = NestedHyperlinkedRelatedField(
+        many=True,
+        view_name='tag-detail',
+        parent_lookup_kwargs={'user_pk': 'user_id'},
+        queryset=Tag.objects.all()
+    )
     attachments = RelatedAttachmentSerializer(many=True, required=False)
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
