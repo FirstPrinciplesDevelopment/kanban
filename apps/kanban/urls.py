@@ -47,7 +47,7 @@ user_router = NestedDefaultRouter(
 )
 user_router.register(r'tags', TagViewSet)
 # /users/{user_pk}/tags/
-# /users/{user_pk}/tags/{tag_pk}
+# /users/{user_pk}/tags/{tag_pk}/
 
 
 urlpatterns = [
