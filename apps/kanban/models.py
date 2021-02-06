@@ -7,14 +7,6 @@ from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from rest_framework.authtoken.models import Token
 
-# constants
-IMAGE = 0
-TEXT_FILE = 1
-FILE_EXTENSION_CHOICES = (
-    (IMAGE, '.jpg,.jpeg,.gif,.png,.pdf,'),
-    (TEXT_FILE, '.txt,.rst,.md,.c,.cpp,.h,.cs.,.py')
-)
-
 
 # helpers
 def max_container_position(board_id: int) -> int:
@@ -164,18 +156,6 @@ class Label(models.Model):
         return self.name
 
 
-class AttachmentType(models.Model):
-    name = models.CharField(
-        max_length=50, unique=True, blank=False, null=False
-    )
-    file_extension = models.IntegerField(
-        choices=FILE_EXTENSION_CHOICES, default=IMAGE
-    )
-
-    def __str__(self):
-        return self.name
-
-
 class Attachment(models.Model):
     """An Attachment is a file uploaded by a Member of a Board."""
     board = models.ForeignKey(
@@ -186,9 +166,6 @@ class Attachment(models.Model):
         max_length=50, unique=True, blank=False, null=False
     )
     file_path = models.URLField(blank=False, null=False)
-    attachment_type = models.ForeignKey(
-        AttachmentType, on_delete=models.CASCADE, blank=False, null=False
-    )
     uploaded_by = models.ForeignKey(
         KanBanUser, on_delete=models.CASCADE, blank=False, null=False
     )

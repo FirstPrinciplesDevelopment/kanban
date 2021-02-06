@@ -17,7 +17,7 @@ router.register(r'boards', BoardViewSet)
 
 boards_router = NestedDefaultRouter(
     router, r'boards', lookup='board'
-    )
+)
 boards_router.register(r'members', MemberViewSet)
 # /boards/{board_pk}/members/
 # /boards/{board_pk}/members/{member_pk}/
@@ -33,7 +33,7 @@ boards_router.register(r'containers', ContainerViewSet)
 
 containers_router = NestedDefaultRouter(
     boards_router, r'containers', lookup='container'
-    )
+)
 containers_router.register(r'cards', CardViewSet)
 # /boards/{board_pk}/containers/{container_pk}/cards/
 # /boards/{board_pk}/containers/{container_pk}/cards/{card_pk}/
