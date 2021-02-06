@@ -5,11 +5,9 @@ from rest_framework_nested.routers import NestedDefaultRouter
 
 from .views import (AttachmentViewSet, BoardViewSet, CardViewSet,
                     ContainerViewSet, KanBanUserViewSet, LabelViewSet,
-                    MemberViewSet, NormalizedViewSet, TagViewSet)
+                    MemberViewSet, NormalizedView, TagViewSet)
 
 router = DefaultRouter()
-router.register(r'normalized', NormalizedViewSet, basename="normalized")
-# /normalized/
 
 router.register(r'boards', BoardViewSet)
 # /boards/
@@ -52,8 +50,30 @@ user_router.register(r'tags', TagViewSet)
 
 urlpatterns = [
     path('auth/', obtain_auth_token),
+    path('normalized/', NormalizedView.as_view()),
     path('', include(router.urls)),
     path('', include(boards_router.urls)),
     path('', include(containers_router.urls)),
     path('', include(user_router.urls))
 ]
+
+# /auth/
+# /normalized/
+
+# /boards/
+# /boards/{user_pk}/
+# /boards/{board_pk}/members/
+# /boards/{board_pk}/members/{member_pk}/
+# /boards/{board_pk}/labels/
+# /boards/{board_pk}/labels/{label_pk}/
+# /boards/{board_pk}/attachments/
+# /boards/{board_pk}/attachments/{attachment_pk}/
+# /boards/{board_pk}/containers/
+# /boards/{board_pk}/containers/{container_pk}/
+# /boards/{board_pk}/containers/{container_pk}/cards/
+# /boards/{board_pk}/containers/{container_pk}/cards/{card_pk}/
+
+# /users/
+# /users/{user_pk}/
+# /users/{user_pk}/tags/
+# /users/{user_pk}/tags/{tag_pk}/
