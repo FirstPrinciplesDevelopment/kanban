@@ -127,6 +127,13 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
         view_name='attachment-detail',
         queryset=Attachment.objects.all()
     )
+    assigned_users = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='member-detail',
+        queryset=Member.objects.all()
+    )
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }

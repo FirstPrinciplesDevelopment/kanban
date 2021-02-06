@@ -248,7 +248,7 @@ class Card(Auditable):
         max_digits=12, decimal_places=4, blank=True, null=True
     )
     position = models.PositiveSmallIntegerField(blank=True, null=False)
-    assigned_users = models.ManyToManyField(KanBanUser, blank=True)
+    assigned_users = models.ManyToManyField(Member, blank=True)
     labels = models.ManyToManyField(Label, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     attachments = models.ManyToManyField(Attachment, blank=True)
