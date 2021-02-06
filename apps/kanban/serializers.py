@@ -14,83 +14,36 @@ AUDITABLE_FIELDS = [
 ]
 
 
-# related model serializers
-
-class RelatedContainerSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Container."""
-    parent_lookup_kwargs = {'board_pk': 'board__pk'}
-
-    class Meta:
-        model = Container
-        fields = ('url', 'id', 'name')
-
-
-class RelatedBoardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Board."""
-    parent_lookup_kwargs = {'pk': 'pk'}
-
-    class Meta:
-        model = Board
-        fields = ('url', 'id')
-
-
-class RelatedLabelSerialzer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Label"""
-    parent_lookup_kwargs = {'board_pk': 'board__pk'}
-
-    class Meta:
-        model = Label
-        fields = ('url', 'id', 'name')
-
-
-class RelatedMemberSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Member."""
-    parent_lookup_kwargs = {
-        'board_pk': 'board__pk'
-    }
-
-    class Meta:
-        model = Member
-        fields = ('url', 'id', 'board')
-
-
-class RelatedCardSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Card."""
-    parent_lookup_kwargs = {
-        'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
-    }
-
-    class Meta:
-        model = Card
-        fields = ('url', 'id', 'name')
-
-
-class RelatedTagSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Tag"""
-    parent_lookup_kwargs = {'user_pk': 'user__pk'}
-
-    class Meta:
-        model = Tag
-        fields = ('url', 'id', 'name')
-
-
-class RelatedAttachmentSerializer(NestedHyperlinkedModelSerializer):
-    """Serialize the relationship from a related model to a Attachment"""
-    parent_lookup_kwargs = {'board_pk': 'board__pk'}
-
-    class Meta:
-        model = Attachment
-        fields = ('url', 'id', 'name', 'file_path')
-
-
-# model serializers
-
 class BoardSerializer(HyperlinkedModelSerializer):
     """Serialize a Board object."""
-    containers = RelatedContainerSerializer(many=True, required=False)
-    labels = RelatedLabelSerialzer(many=True, required=False)
-    attachments = RelatedAttachmentSerializer(many=True, required=False)
-    members = RelatedMemberSerializer(many=True, required=False)
+    containers = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='container-detail',
+        queryset=Container.objects.all()
+    )
+    labels = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='label-detail',
+        queryset=Label.objects.all()
+    )
+    attachments = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='attachment-detail',
+        queryset=Attachment.objects.all()
+    )
+    members = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='member-detail',
+        queryset=Member.objects.all()
+    )
 
     class Meta:
         model = Board
@@ -111,9 +64,28 @@ class MemberSerializer(NestedHyperlinkedModelSerializer):
 
 class ContainerSerializer(NestedHyperlinkedModelSerializer):
     """Serialize a Container object."""
-    cards = RelatedCardSerializer(many=True, required=False)
-    labels = RelatedLabelSerialzer(many=True, required=False)
-    tags = RelatedTagSerializer(many=True, required=False)
+    cards = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={
+            'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
+        },
+        view_name='card-detail',
+        queryset=Card.objects.all()
+    )
+    labels = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='label-detail',
+        queryset=Label.objects.all()
+    )
+    tags = NestedHyperlinkedRelatedField(
+        many=True,
+        view_name='tag-detail',
+        parent_lookup_kwargs={'user_pk': 'user__pk'},
+        queryset=Tag.objects.all()
+    )
     parent_lookup_kwargs = {'board_pk': 'board__pk'}
 
     class Meta:
@@ -135,14 +107,26 @@ class CardSerializer(NestedHyperlinkedModelSerializer):
         view_name='container-detail',
         queryset=Container.objects.all()
     )
-    labels = RelatedLabelSerialzer(many=True, required=False)
+    labels = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='label-detail',
+        queryset=Label.objects.all()
+    )
     tags = NestedHyperlinkedRelatedField(
         many=True,
         view_name='tag-detail',
         parent_lookup_kwargs={'user_pk': 'user__pk'},
         queryset=Tag.objects.all()
     )
-    attachments = RelatedAttachmentSerializer(many=True, required=False)
+    attachments = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='attachment-detail',
+        queryset=Attachment.objects.all()
+    )
     parent_lookup_kwargs = {
         'board_pk': 'container__board__pk', 'container_pk': 'container__pk'
     }
@@ -202,8 +186,19 @@ class AttachmentSerializer(NestedHyperlinkedModelSerializer):
 
 class KanBanUserSerializer(HyperlinkedModelSerializer):
     """Serialize a KanBanUser object."""
-    tags = RelatedTagSerializer(many=True, required=False)
-    memberships = RelatedMemberSerializer(many=True, required=False)
+    tags = NestedHyperlinkedRelatedField(
+        many=True,
+        view_name='tag-detail',
+        parent_lookup_kwargs={'user_pk': 'user__pk'},
+        queryset=Tag.objects.all()
+    )
+    memberships = NestedHyperlinkedRelatedField(
+        many=True,
+        required=False,
+        parent_lookup_kwargs={'board_pk': 'board__pk'},
+        view_name='member-detail',
+        queryset=Member.objects.all()
+    )
 
     class Meta:
         model = KanBanUser
