@@ -46,8 +46,8 @@ class BoardSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Board
         fields = [
-            'url', 'id', 'name', 'slug', 'position',
-            'containers', 'members', 'labels', 'attachments'
+            'url', 'id', 'name', 'slug', 'containers',
+            'members', 'labels', 'attachments'
         ] + AUDITABLE_FIELDS
 
 
