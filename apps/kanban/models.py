@@ -98,7 +98,6 @@ class Board(Auditable):
         blank=False, null=False
     )
     slug = models.SlugField(max_length=50, unique=True, blank=True, null=False)
-    position = models.PositiveSmallIntegerField(blank=True, null=False)
 
     def __str__(self):
         return self.name
