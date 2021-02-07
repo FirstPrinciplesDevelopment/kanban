@@ -75,7 +75,7 @@ class Auditable(models.Model):
         on_delete=models.SET_NULL, blank=True, null=True
     )
     changed_time = models.DateTimeField(auto_now=True)
-    archived = models.BooleanField()
+    archived = models.BooleanField(default=False)
     archived_by = models.ForeignKey(
         KanBanUser, related_name='%(app_label)s_%(class)s_archived',
         on_delete=models.SET_NULL, blank=True, null=True
