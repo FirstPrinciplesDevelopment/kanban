@@ -229,6 +229,20 @@ class Card(Auditable):
     tags = models.ManyToManyField(Tag, blank=True)
     attachments = models.ManyToManyField(Attachment, blank=True)
 
+    def reorder_cards(self):
+        """Card being saved is source of truth, reorder others around it"""
+        # get all cards in this container, ordered by position
+        cards = Card.objects.filter(
+            container__pk=self.container_pk).order_by('position')
+        i = 1
+        while i <= range(len(cards)):
+            if (i != self.position):
+                # pop the card with the lowest position, set position and save
+                c = cards.pop(0)
+                c.position = i
+                c.save({'reordering': True})
+            i += 1
+
     def __str__(self):
         return self.name
 
@@ -240,4 +254,6 @@ class Card(Auditable):
             new_position = max_position + 1
             # set self.position
             self.position = new_position
+        if not kwargs['reordering']:
+            self.reorder_cards()
         return super().save(*args, **kwargs)
