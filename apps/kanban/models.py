@@ -231,22 +231,31 @@ class Card(Auditable):
 
     def reorder_cards(self):
         """Card being saved is source of truth, reorder others around it"""
-        # get all cards in this container, ordered by position
-        cards = Card.objects.filter(
-            container__pk=self.container_pk).order_by('position')
+        # get all the other cards in this container, ordered by position
+        cards = list(
+            Card.objects
+            .filter(container__pk=self.container_id)
+            .exclude(id=self.id)
+            .order_by('position')
+        )
         i = 1
-        while i <= range(len(cards)):
+        while len(cards) > 0:
             if (i != self.position):
                 # pop the card with the lowest position, set position and save
                 c = cards.pop(0)
-                c.position = i
-                c.save({'reordering': True})
+                if (c.position != i):
+                    c.position = i
+                    # save with reorder kwarg False to prevent recursion
+                    c.save(reorder=False)
             i += 1
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
+        # important! make sure 'reordering' kwarg is removed
+        # https://docs.python.org/3/library/stdtypes.html#dict.pop
+        do_reorder = kwargs.pop('reorder', True)
         if not self.position:
             # get the max position of a cards in this card's containers
             max_position = max_card_position(self.container_id)
@@ -254,6 +263,6 @@ class Card(Auditable):
             new_position = max_position + 1
             # set self.position
             self.position = new_position
-        if not kwargs['reordering']:
+        if do_reorder:
             self.reorder_cards()
         return super().save(*args, **kwargs)
