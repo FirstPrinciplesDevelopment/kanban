@@ -46,27 +46,17 @@ class MemberViewSet(viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
-    def get_queryset(self, *args, **kwargs):
-        return Member.objects.filter(board=self.kwargs['board_pk'])
-
 
 class ContainerViewSet(viewsets.ModelViewSet):
     queryset = Container.objects.all()
     serializer_class = ContainerSerializer
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
-    def get_queryset(self, *args, **kwargs):
-        return Container.objects.filter(board=self.kwargs['board_pk'])
-
 
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
     serializer_class = CardSerializer
     authentication_classes = [TokenAuthentication, SessionAuthentication]
-
-    def get_queryset(self, *args, **kwargs):
-        return Card.objects.filter(container__board=self.kwargs['board_pk'],
-                                   container=self.kwargs['container_pk'])
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):
@@ -80,17 +70,11 @@ class TagViewSet(viewsets.ModelViewSet):
     serializer_class = TagSerializer
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
-    def get_queryset(self, *args, **kwargs):
-        return Tag.objects.filter(user=self.kwargs['user_pk'])
-
 
 class LabelViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     authentication_classes = [TokenAuthentication, SessionAuthentication]
-
-    def get_queryset(self, *args, **kwargs):
-        return Label.objects.filter(board=self.kwargs['board_pk'])
 
 
 class KanBanUserViewSet(viewsets.ModelViewSet):
