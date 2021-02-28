@@ -14,20 +14,22 @@ from .serializers import (AttachmentSerializer, BoardSerializer,
                           TagSerializer)
 
 
+# TODO: be more granular with user level permissions here
+# TODO: implement user level permissions across all views/models
 class NormalizedView(APIView):
     authentication_classes = [TokenAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         entities = {
-            "boards": Board.objects.all(),
-            "containers": Container.objects.all(),
-            "cards": Card.objects.all(),
-            "members": Member.objects.all(),
-            "tags": Tag.objects.all(),
+            "boards": Board.objects.filter(created_by=request.user),
+            "containers": Container.objects.filter(created_by=request.user),
+            "cards": Card.objects.filter(created_by=request.user),
+            "members": Member.objects.filter(user=request.user),
+            "tags": Tag.objects.filter(user=request.user),
             "labels": Label.objects.all(),
-            "attachments": Attachment.objects.all(),
-            "users": KanBanUser.objects.all()
+            "attachments": Attachment.objects.filter(uploaded_by=request.user),
+            "users": KanBanUser.objects.get(pk=request.user.pk)
         }
         serializer = NormalizedSerializer(
             entities, context={'request': request}

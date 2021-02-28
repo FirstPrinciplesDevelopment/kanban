@@ -45,6 +45,10 @@ class BoardSerializer(HyperlinkedModelSerializer):
             'members', 'labels', 'attachments'
         ] + AUDITABLE_FIELDS
 
+    def create(self, validated_data):
+        validated_data['created_by'] = self.context['request'].user
+        return super().create(validated_data)
+
 
 class MemberSerializer(HyperlinkedModelSerializer):
     """Serialize a Member object."""
@@ -84,8 +88,8 @@ class ContainerSerializer(HyperlinkedModelSerializer):
         ] + AUDITABLE_FIELDS
 
     def create(self, validated_data):
-        container = Container.objects.create(**validated_data)
-        return container
+        validated_data['created_by'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class CardSerializer(HyperlinkedModelSerializer):
@@ -130,8 +134,8 @@ class CardSerializer(HyperlinkedModelSerializer):
         ] + AUDITABLE_FIELDS
 
     def create(self, validated_data):
-        card = Card.objects.create(**validated_data)
-        return card
+        validated_data['created_by'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class TagSerializer(HyperlinkedModelSerializer):

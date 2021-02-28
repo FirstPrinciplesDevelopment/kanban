@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from rest_framework.authtoken.models import Token
+import time
 
 
 # helpers
@@ -65,6 +66,9 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 # https://docs.djangoproject.com/en/3.1/topics/db/models/#abstract-base-classes
 class Auditable(models.Model):
     """A base class to define common auditable fields."""
+    slug = models.SlugField(
+        max_length=120, unique=True, blank=True, null=False
+    )
     created_by = models.ForeignKey(
         KanBanUser, related_name='%(class)ss_created',
         on_delete=models.SET_NULL, blank=True, null=True
@@ -85,19 +89,19 @@ class Auditable(models.Model):
     class Meta:
         abstract = True
 
+    # slugify timestamp and name on initial save
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify("-".join((str(time.time()), self.name)))
         return super().save(*args, **kwargs)
 
 
 class Board(Auditable):
     """A Board has many Containers with Cards in them and many members."""
     name = models.CharField(
-        max_length=50, unique=True,
+        max_length=50,
         blank=False, null=False
     )
-    slug = models.SlugField(max_length=50, unique=True, blank=True, null=False)
 
     def __str__(self):
         return self.name
@@ -136,6 +140,10 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class Label(models.Model):
@@ -181,9 +189,8 @@ class Container(Auditable):
         blank=False, null=False
     )
     name = models.CharField(
-        max_length=50, unique=True, blank=False, null=False
+        max_length=50, blank=False, null=False
     )
-    slug = models.SlugField(max_length=50, unique=True, blank=True, null=False)
     position = models.PositiveSmallIntegerField(blank=True, null=False)
     labels = models.ManyToManyField(Label, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
@@ -209,10 +216,7 @@ class Card(Auditable):
         blank=False, null=False
     )
     name = models.CharField(
-        max_length=100, unique=True, blank=False, null=False
-    )
-    slug = models.SlugField(
-        max_length=100, unique=True, blank=True, null=False
+        max_length=100, blank=False, null=False
     )
     content = models.TextField(blank=True, null=True)
     start_time = models.DateTimeField(blank=True, null=True)
