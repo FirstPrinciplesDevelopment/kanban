@@ -29,7 +29,7 @@ class NormalizedView(APIView):
             "tags": Tag.objects.filter(user=request.user),
             "labels": Label.objects.all(),
             "attachments": Attachment.objects.filter(uploaded_by=request.user),
-            "users": KanBanUser.objects.get(pk=request.user.pk)
+            "users": KanBanUser.objects.filter(pk=request.user.pk)
         }
         serializer = NormalizedSerializer(
             entities, context={'request': request}
