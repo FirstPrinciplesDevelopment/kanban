@@ -181,6 +181,8 @@ if DEBUG:
 else:
     CORS_ORIGIN_WHITELIST = (
         'https://mellkior.github.io',
+        'https://coopsimply.com',
+        'https://www.coopsimply.com',
         'https://kanban.firstprinciplesdevelopment.com',
         'https://kanban.principlesdev.com'
     )
