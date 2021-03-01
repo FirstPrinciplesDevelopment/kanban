@@ -37,8 +37,8 @@ if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = [
-        'domain.com', '.domain.com', 'ffff:ffff::ffff:ffff:ffff:ffff',
-        '0.0.0.0', 'localhost'
+        'coopsimply.com', '.coopsimply.com', '172.104.16.248',
+        '2600:3c03::f03c:92ff:fed1:e2ac', '0.0.0.0', 'localhost'
         ]
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
@@ -176,4 +176,11 @@ AUTH_USER_MODEL = 'kanban.KanBanUser'
 
 # This should be changed once we put this in production.
 # In production, whitelist: https://stackoverflow.com/a/22360893/10307728
-CORS_ORIGIN_ALLOW_ALL = True
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_WHITELIST = (
+        'mellkior.github.io',
+        'kanban.firstprinciplesdevelopment.com',
+        'kanban.principlesdev.com'
+    )
