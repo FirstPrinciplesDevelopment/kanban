@@ -180,7 +180,7 @@ if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
 else:
     CORS_ORIGIN_WHITELIST = (
-        'mellkior.github.io',
-        'kanban.firstprinciplesdevelopment.com',
-        'kanban.principlesdev.com'
+        'https://mellkior.github.io',
+        'https://kanban.firstprinciplesdevelopment.com',
+        'https://kanban.principlesdev.com'
     )
