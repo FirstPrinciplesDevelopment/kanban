@@ -118,12 +118,12 @@ class Register(APIView):
         """Create a new user with the specified username and password"""
         try:
             user = KanBanUser()
-            if (len(request.data['username']) == 0):
+            if len(request.data['username']) == 0:
                 return Response(
                     {"error": "username cannot be empty"},
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY
                 )
-            elif (len(request.data['password']) == 0):
+            elif len(request.data['password']) == 0:
                 return Response(
                     {"error": "password cannot be empty"},
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY
