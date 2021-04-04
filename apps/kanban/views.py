@@ -1,10 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
+from django.db import IntegrityError
 
 from .models import (Attachment, Board, Card, Container, KanBanUser, Label,
                      Member, Tag)
@@ -122,6 +123,17 @@ class Register(APIView):
             user.save()
         except KeyError:
             # username or password weren't in the POST body
-            # TODO: handle!
-            pass
-        return Response({"username": user.username, "password": user.password})
+            return Response(
+                {"error": "invalid register attempt"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except IntegrityError:
+            # username was not valid
+            return Response(
+                {"error": "a user with this username already exists"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        return Response(
+            {"username": user.username, "success": True},
+            status=status.HTTP_201_CREATED
+        )
